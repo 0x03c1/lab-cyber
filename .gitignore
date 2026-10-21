@@ -1,0 +1,76 @@
+# ============================================================
+# .gitignore — Aula prática de Cibersegurança (DDoS · Malware · RCE)
+# Material didático sintético para laboratório isolado.
+#
+# ATENÇÃO: as evidências sintéticas do desafio (desafio-final/*.pcap,
+# *.log, *.csv, *.txt) devem SIM ser versionadas — são parte do
+# material dos alunos. Este arquivo só bloqueia artefatos locais,
+# lixo de SO/editor e capturas REAIS acidentais.
+# ============================================================
+
+# ============================================================
+# Material didático EXCLUSIVO — não publicar
+# Gabarito do desafio fica SOMENTE local (fora do Git), senão
+# os alunos acessam as respostas e a atividade perde o sentido.
+# ============================================================
+material-pratico/desafio-final/GABARITO-professor.md
+
+# ---------- Python (caches e bytecode) ----------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# ---------- Ambientes virtuais ----------
+.venv/
+venv/
+env/
+ENV/
+
+# ---------- Credenciais / segredos (nunca versionar) ----------
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+secrets.*
+
+# ---------- Capturas REAIS / dumps de análise local ----------
+# (impede subir acidentalmente tráfego de rede real capturado no lab;
+#  os .pcap SINTÉTICOS versionados em desafio-final/ não são afetados)
+*.pcapng
+*.cap
+*.dump
+*.raw
+
+# ---------- SO — macOS ----------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ---------- SO — Windows ----------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---------- Editores / IDEs ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ---------- Arquivos temporários locais ----------
+*.tmp
+*.bak
+*.old
