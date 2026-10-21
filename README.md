@@ -41,8 +41,12 @@ Se sua rede for outra, edite as constantes no topo de `material-pratico/desafio-
 
 ### Fazer o Kali e o Windows VM se enxergarem (configuração mínima)
 
-**No hipervisor (VirtualBox: faça nas DUAS VMs — Kali e Windows):**
-`Configurações → Rede → Adaptador 1` → modo **Placa somente-hospedeiro (host-only)**, cabo conectado, modo promíscuo "Permitir tudo" (só precisa no Ettercap ao vivo). *VMware:* `Host-only` (vmnet1) nas duas. *Kali físico:* Windows VM em **Bridge** para o switch isolado do lab.
+> **Atenção:** os comandos `netsh`/`ipconfig` abaixo rodam **dentro da VM Windows convidada** (a estação do laboratório, `.30`) — não no Windows hospedeiro onde o VirtualBox está instalado. O firewall do hospedeiro não interfere no tráfego VM↔VM.
+
+**No hipervisor (VirtualBox sobre Windows: faça nas DUAS VMs — Kali e Windows):**
+`Configurações → Rede → Adaptador 1` → modo **Placa somente-hospedeiro (host-only)**, cabo conectado, modo promíscuo "Permitir tudo" (só precisa no Ettercap ao vivo). O adaptador host-only ("VirtualBox Host-Only Ethernet Adapter", com o `.1`) já existe por padrão — confira em `Arquivo → Ferramentas → Gerenciador de rede` no VirtualBox. *VMware:* `Host-only` (vmnet1) nas duas.
+
+**⚠️ Setup típico desta aula — Servidor = Pi físico · Cliente = Kali VM no VirtualBox (Windows):** o host-only **não alcança o Pi físico** — a Kali VM precisa de **modo Bridge**. Windows hospedeiro: NIC **Ethernet (cabo, não Wi-Fi)** no switch isolado, IP `192.168.56.30` sem gateway. Kali VM: Adaptador 1 → **Bridge na placa Ethernet** → dentro do Kali, IP `192.168.56.20/24` sem gateway. Pi: Ethernet no mesmo switch, IP `192.168.56.10` (nmcli ou `/etc/dhcpcd.conf`). **Copie o material (`material-pratico/`) para dentro do Pi e da Kali VM** (git clone ou Pasta Compartilhida do VirtualBox). Verifique: Kali→`ping -c 3 192.168.56.10`; Windows→`ping 192.168.56.10` e `ping 192.168.56.20`; Pi→`ping -c 3 192.168.56.20`. Detalhe completo: seção 4 do plano, "Cenário 3".
 
 **Endereços (mesma sub-rede, gateway vazio):** Kali `192.168.56.20` · Windows `192.168.56.30` · máscara `255.255.255.0`.
 
