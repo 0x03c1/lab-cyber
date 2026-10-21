@@ -1,0 +1,17 @@
+# Eventos SINTETICOS da estacao/servico de laboratorio (nivel didatico).
+# Mostram um servico de rede gerando um processo filho inesperado e um
+# 'beacon' periodico de saida (comportamento tipico pos-RCE). Tudo ficticio.
+
+2026-10-21 14:04:30 labhost ftpd[1821]: conexao recebida de 192.168.56.50 na porta 21
+2026-10-21 14:04:32 labhost ftpd[1821]: comando de autenticacao malformado recebido
+2026-10-21 14:04:33 labhost kernel: ftpd(1821) gerou processo filho inesperado: /bin/sh (pid 1840)
+2026-10-21 14:04:33 labhost sh[1840]: processo shell iniciado com uid=0(root)  <-- ANOMALIA: servico FTP nao deveria abrir shell
+2026-10-21 14:04:35 labhost network: nova conexao de SAIDA 192.168.56.40:40141 -> 192.168.56.50:4444 (estado ESTABELECIDO)
+2026-10-21 14:05:05 labhost network: beacon de SAIDA 192.168.56.40 -> 192.168.56.50:4444 (keep-alive, 93 bytes)
+2026-10-21 14:05:35 labhost network: beacon de SAIDA 192.168.56.40 -> 192.168.56.50:4444 (keep-alive, 86 bytes)
+2026-10-21 14:06:05 labhost network: beacon de SAIDA 192.168.56.40 -> 192.168.56.50:4444 (keep-alive, 109 bytes)
+2026-10-21 14:06:35 labhost network: beacon de SAIDA 192.168.56.40 -> 192.168.56.50:4444 (keep-alive, 86 bytes)
+2026-10-21 14:07:05 labhost network: beacon de SAIDA 192.168.56.40 -> 192.168.56.50:4444 (keep-alive, 112 bytes)
+2026-10-21 14:07:50 labhost cron: NOVA tarefa agendada criada por uid=0: '* * * * * /tmp/.svc'  <-- possivel PERSISTENCIA
+2026-10-21 14:07:55 labhost auth: nenhuma falha de login registrada neste intervalo (acesso veio por execucao remota, nao por senha)
+

@@ -1,0 +1,16 @@
+# Tabela ARP da estacao 192.168.56.30 ANTES e DEPOIS do incidente (sintetico).
+# Comando de referencia: 'arp -a' (Windows) ou 'ip neigh' (Linux).
+
+==================== ANTES (estado normal) ====================
+192.168.56.1     aa:bb:cc:00:00:01   dinamico
+192.168.56.40    aa:bb:cc:00:00:40   dinamico
+
+==================== DEPOIS (estado suspeito) ====================
+192.168.56.1     de:ad:be:ef:00:50   dinamico     <-- O MAC do GATEWAY MUDOU
+192.168.56.40    aa:bb:cc:00:00:40   dinamico
+192.168.56.50    de:ad:be:ef:00:50   dinamico     <-- mesmo MAC do 'gateway' acima = MAC DUPLICADO
+
+# SINAL-CHAVE: o IP do gateway (192.168.56.1) passou a responder com o MAC
+# de:ad:be:ef:00:50, que tambem pertence a 192.168.56.50. Dois IPs, um unico MAC:
+# classico de ENVENENAMENTO DE CACHE ARP (man-in-the-middle). O trafego da
+# estacao para o 'gateway' passa a ir para o atacante.

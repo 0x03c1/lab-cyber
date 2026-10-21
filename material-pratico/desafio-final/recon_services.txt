@@ -1,0 +1,27 @@
+# Resultado SINTÉTICO de reconhecimento do serviço de laboratório.
+# Reproduz o estilo de 'nmap -sV 192.168.56.40' contra um alvo deliberadamente
+# vulnerável (Metasploitable 2). NÃO foi executado contra sistema real.
+
+Starting Nmap ( https://nmap.org ) contra 192.168.56.40
+Nmap scan report for 192.168.56.40
+Host is up (0.00042s latency).
+Not shown: 977 closed tcp ports (reset)
+
+PORT     STATE SERVICE     VERSION
+21/tcp   open  ftp         vsftpd 2.3.4
+22/tcp   open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0)
+23/tcp   open  telnet      Linux telnetd
+25/tcp   open  smtp        Postfix smtpd
+80/tcp   open  http        Apache httpd 2.2.8 ((Ubuntu) DAV/2)
+139/tcp  open  netbios-ssn Samba smbd 3.X - 4.X
+445/tcp  open  netbios-ssn Samba smbd 3.X - 4.X
+3306/tcp open  mysql       MySQL 5.0.51a-3ubuntu5
+5900/tcp open  vnc         VNC (protocol 3.3)
+
+MAC Address: AA-BB-CC-00-00-40 (Laboratorio-Sintetico)
+Service Info: OS: Linux (laboratorio isolado)
+
+# OBSERVACAO PARA O PROFESSOR:
+# - A porta 21 expoe 'vsftpd 2.3.4', versao com vulnerabilidade de laboratorio
+#   amplamente DOCUMENTADA e usada para ensino de RCE. E o foco sugerido da Pratica 2.
+# - Superficie de ataque: muitos servicos abertos e versoes antigas = risco.
