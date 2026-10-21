@@ -48,6 +48,8 @@ Se sua rede for outra, edite as constantes no topo de `material-pratico/desafio-
 
 **⚠️ Setup típico desta aula — Servidor = Pi físico · Cliente = Kali VM no VirtualBox (Windows):** o host-only **não alcança o Pi físico** — a Kali VM precisa de **modo Bridge**. Windows hospedeiro: NIC **Ethernet (cabo, não Wi-Fi)** no switch isolado, IP `192.168.56.30` sem gateway. Kali VM: Adaptador 1 → **Bridge na placa Ethernet** → dentro do Kali, IP `192.168.56.20/24` sem gateway. Pi: Ethernet no mesmo switch, IP `192.168.56.10` (nmcli ou `/etc/dhcpcd.conf`). **Copie o material (`material-pratico/`) para dentro do Pi e da Kali VM** (git clone ou Pasta Compartilhida do VirtualBox). Verifique: Kali→`ping -c 3 192.168.56.10`; Windows→`ping 192.168.56.10` e `ping 192.168.56.20`; Pi→`ping -c 3 192.168.56.20`. Detalhe completo: seção 4 do plano, "Cenário 3".
 
+**💡 Sem switch e sem cabos? CardComputer M5 como AP isolado:** grave o `main.py` de ~10 linhas (seção 4, "Cenário 4") — o CardComputer vira um Wi-Fi `LAB-SEC-SERTAO` totalmente isolado (sem internet), AP no `.1` do material; Pi/Windows/Kali associam a ele e usam os mesmos IPs. Ettercap fica em modo análise; Práticas 1 e 2 funcionam normal.
+
 **Endereços (mesma sub-rede, gateway vazio):** Kali `192.168.56.20` · Windows `192.168.56.30` · máscara `255.255.255.0`.
 
 **Windows VM (PowerShell/CMD como Administrador):**
