@@ -21,6 +21,13 @@ checklists) está em `aula-ciberseguranca-ddos-malware-rce.md`, aqui na raiz.
     ├── pratica3-ettercap/
     │   ├── analisar_pcap.sh           HTTP-claro vs TLS-cifrado + ARP envenenado
     │   └── ver_arp.sh                 tabela ARP atual + destaque de MAC duplicado
+    ├── pratica4-reversing/
+    │   ├── fontes/                    segredo.c · Segredo.java · segredo.py (alvos benignos)
+    │   ├── gerar_alvos.sh             compila .py/.pyc/.jar/.exe/.elf para analisar
+    │   ├── analisar_alvos.sh          file/strings/unzip/javap/objdump (estático)
+    │   ├── roteiro-reversing.md       passo a passo comentado
+    │   ├── ATIVIDADE-alunos.md        "caça às bandeiras" (7 segredos a extrair)
+    │   └── GABARITO-reversing-professor.md  (SÓ local - fora do repositório)
     ├── desafio-final/
     │   ├── gerar_evidencias.py        (re)gera todas as evidências sintéticas
     │   ├── BRIEFING-alunos.md         enunciado + lista de evidências (p/ alunos)
@@ -165,6 +172,15 @@ wireshark desafio-final/lab_trafego.pcap                # se Wireshark gráfico 
 wireshark desafio-final/arp_incident.pcap
 ```
 Correção com `material-pratico/desafio-final/GABARITO-professor.md` (arquivo local do professor, fora do repositório) e rubrica (seção 13 do plano).
+
+### Prática 4 (extra) — Engenharia reversa: "caça às bandeiras" (~25 min)
+**Na estação Kali:**
+```bash
+cd material-pratico/pratica4-reversing
+./gerar_alvos.sh
+./analisar_alvos.sh
+```
+Depois distribua `ATIVIDADE-alunos.md` aos grupos (alvos em `alvos/`, gerados acima; fontes em `fontes/` — peça para não olharem antes da análise). Análise **100% estática**: nunca executar os alvos. Roteiro detalhado com saídas esperadas: `roteiro-reversing.md`. Correção com `GABARITO-reversing-professor.md` (arquivo local, fora do repositório).
 
 ---
 
